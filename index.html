@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>农产品管理系统</title>
+	<link href="plugins/fullPage/jquery.fullPage.css" rel="stylesheet"/>
+	<link href="plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>
+	<link href="plugins/waves-0.7.5/waves.min.css" rel="stylesheet"/>
+	<link href="plugins/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.min.css" rel="stylesheet"/>
+	<link href="css/admin.css" rel="stylesheet"/>
+</head>
+<body>
+<header id="header">
+	<ul id="menu">
+		<li id="guide" class="line-trigger">
+			<div class="line-wrap">
+				<div class="line top"></div>
+				<div class="line center"></div>
+				<div class="line bottom"></div>
+			</div>
+		</li>
+		<li id="logo" class="hidden-xs">
+			<a href="index.html">
+				<img src=""/>
+			</a>
+			<span id="system_title">农产品管理系统</span>
+		</li>
+		<li class="pull-right">
+			<ul class="hi-menu">
+				<!-- 搜索 -->
+				<li class="dropdown">
+					<a class="waves-effect waves-light" data-toggle="dropdown" href="javascript:;">
+						<i class="him-icon zmdi zmdi-search"></i>
+					</a>
+					<ul class="dropdown-menu dm-icon pull-right">
+						<form id="search-form" class="form-inline">
+							<div class="input-group">
+								<input id="keywords" type="text" name="keywords" class="form-control" placeholder="搜索"/>
+								<div class="input-group-btn">
+									<button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+								</div>
+							</div>
+						</form>
+					</ul>
+				</li>
+				<li class="dropdown">
+					<a class="waves-effect waves-light" data-toggle="dropdown" href="javascript:;">
+						<i class="him-icon zmdi zmdi-more-vert"></i>
+					</a>
+					<ul class="dropdown-menu dm-icon pull-right">
+						<li class="hidden-xs">
+							<a class="waves-effect" data-ma-action="fullscreen" href="javascript:fullPage();"><i class="zmdi zmdi-fullscreen"></i> 全屏模式</a>
+						</li>
+						<li>
+							<a class="waves-effect" data-ma-action="clear-localstorage" href="javascript:;"><i class="zmdi zmdi-delete"></i> 个人信息</a>
+						</li>
+						<li>
+							<a class="waves-effect" href="javascript:;"><i class="zmdi zmdi-settings"></i> 系统设置</a>
+						</li>
+						<li>
+							<a class="waves-effect" href="javascript:;"><i class="zmdi zmdi-run"></i> 退出登录</a>
+						</li>
+					</ul>
+				</li>
+			</ul>
+		</li>
+	</ul>
+</header>
+<section id="main">
+	<!-- 左侧导航区 -->
+	<aside id="sidebar">
+		<!-- 菜单区 -->
+		<ul class="main-menu">
+			<li>
+				<a class="waves-effect" href="javascript:Tab.addTab('首页', 'home');"><i class="zmdi zmdi-home"></i> 首页</a>
+			</li>
+			<li>
+				<a class="waves-effect" href="javascript:Tab.addTab('首页', 'home');"><i class="zmdi zmdi-home"></i> 购物</a>
+			</li>
+			<li class="sub-menu system_menus system_1 0">
+				<a class="waves-effect" href="javascript:;"><i class="zmdi zmdi-accounts-list"></i> 用户管理</a>
+				<ul>
+					<li><a class="waves-effect" href="javascript:Tab.addTab('用户信息', 'userInfo.html');">用户信息</a></li>
+					<li><a class="waves-effect" href="javascript:Tab.addTab('经营许可证', 'licenseInfo.html');">经营许可证</a></li>
+				</ul>
+			</li>
+			<li class="sub-menu system_menus system_1 0">
+				<a class="waves-effect" href="javascript:;"><i class="zmdi zmdi-accounts-list"></i> 农产品管理</a>
+				<ul>
+					<li><a class="waves-effect" href="javascript:Tab.addTab('农产品信息', 'productsInfo.html');">农产品信息</a></li>
+					<li><a class="waves-effect" href="javascript:Tab.addTab('订单信息', 'orderInfo.html');">订单信息</a></li>
+				</ul>
+			</li>
+			<li class="sub-menu system_menus system_1 0">
+				<a class="waves-effect" href="javascript:;"><i class="zmdi zmdi-accounts-list"></i> 售后与审批</a>
+				<ul>
+					<li><a class="waves-effect" href="javascript:Tab.addTab('农产品信息', 'serviceInfo.html');">售后信息</a></li>
+					<li><a class="waves-effect" href="javascript:Tab.addTab('订单信息', 'approvalInfo.html');">审批信息</a></li>
+				</ul>
+			</li>
+		</ul>
+		<!-- /菜单区 -->
+	</aside>
+	<!-- /左侧导航区 -->
+	<section id="content">
+		<div class="content_tab">
+			<div class="tab_left">
+				<a class="waves-effect waves-light" href="javascript:;"><i class="zmdi zmdi-chevron-left"></i></a>
+			</div>
+			<div class="tab_right">
+				<a class="waves-effect waves-light" href="javascript:;"><i class="zmdi zmdi-chevron-right"></i></a>
+			</div>
+			<ul id="tabs" class="tabs">
+				<li id="tab_home" data-index="home" data-closeable="false" class="cur">
+					<span class="waves-effect waves-light">首页</span>
+				</li>
+			</ul>
+		</div>
+		<div class="content_main">
+			<div id="iframe_home" class="iframe cur">
+				<p><h4>农产品管理系统</h4></p>
+				<br>
+				<p><h4>系统功能概述：</h4></p>
+				<p><b>购物模块</b>：</p>
+				<p><b>用户管理模块</b>：</p>
+				<p><b>农产品管理模块</b>：</p>
+				<p><b>售后与审批模块</b>：</p>
+			</div>
+		</div>
+	</section>
+</section>
+
+<script src="plugins/jquery.1.12.4.min.js"></script>
+<script src="plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script src="plugins/waves-0.7.5/waves.min.js"></script>
+<script src="plugins/malihu-custom-scrollbar-plugin/jquery.mCustomScrollbar.concat.min.js"></script>
+<script src="plugins/BootstrapMenu.min.js"></script>
+<script src="plugins/device.min.js"></script>
+<script src="plugins/fullPage/jquery.fullPage.min.js"></script>
+<script src="plugins/fullPage/jquery.jdirk.min.js"></script>
+<script src="plugins/jquery.cookie.js"></script>
+<script src="js/admin.js"></script>
+</body>
+</html>
