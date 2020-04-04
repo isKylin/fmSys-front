@@ -1,0 +1,165 @@
+<!DOCTYPE HTML>
+<html lang="zh-cn">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>用户信息</title>
+	<link href="plugins/bootstrap-3.3.0/css/bootstrap.min.css" rel="stylesheet"/>
+	<link href="plugins/material-design-iconic-font-2.2.0/css/material-design-iconic-font.min.css" rel="stylesheet"/>
+	<link href="plugins/bootstrap-table-1.11.0/bootstrap-table.min.css" rel="stylesheet"/>
+	<link href="plugins/waves-0.7.5/waves.min.css" rel="stylesheet"/>
+	<link href="plugins/jquery-confirm/jquery-confirm.min.css" rel="stylesheet"/>
+	<link href="plugins/select2/css/select2.min.css" rel="stylesheet"/>
+	<link href="css/common.css" rel="stylesheet"/>
+</head>
+<body>
+<div id="main">
+	<table id="table"></table>
+</div>
+<!-- 新增 -->
+<div id="createDialog" class="crudDialog" hidden>
+</div>
+<script src="plugins/jquery.1.12.4.min.js"></script>
+<script src="plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
+<script src="plugins/bootstrap-table-1.11.0/bootstrap-table.min.js"></script>
+<script src="plugins/bootstrap-table-1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+<script src="plugins/waves-0.7.5/waves.min.js"></script>
+<script src="plugins/jquery-confirm/jquery-confirm.min.js"></script>
+<script src="plugins/select2/js/select2.min.js"></script>
+<script src="js/common.js"></script>
+<script>
+var urlBase = sessionStorage.getItem('urlBase');
+var userId = sessionStorage.getItem('userId');
+var $table = $('#table');
+$(function() {
+	$(document).on('focus', 'input[type="text"]', function() {
+		$(this).parent().find('label').addClass('active');
+	}).on('blur', 'input[type="text"]', function() {
+		if ($(this).val() == '') {
+			$(this).parent().find('label').removeClass('active');
+		}
+	});
+
+
+
+
+	$table.bootstrapTable({
+		ajax:function(request){                    //使用ajax请求
+			console.log(request.data)
+            $.ajax({
+                type:"post",
+                url:urlBase+'/common/getGoodsList',
+                contentType:'application/json;charset=utf-8',
+                dataType:'json',
+                data:JSON.stringify(request.data),
+                success:function (res) {
+                    request.success({
+                        row:res.data,
+                    });
+                    console.log(res)
+                    $('#table').bootstrapTable('load', res.data);
+                },
+                    error:function(error){
+                        console.log(error);
+                    }
+            })
+        },
+		height: getHeight(),
+		striped: true,
+		search: true,
+		searchOnEnterKey: true,
+		showRefresh: true,
+		showToggle: true,
+		showColumns: true,
+		minimumCountColumns: 2,
+		showPaginationSwitch: true,
+		clickToSelect: true,
+		detailView: true,
+		detailFormatter: 'detailFormatter',
+		pagination: true,
+		paginationLoop: false,
+		classes: 'table table-hover table-no-bordered',
+		smartDisplay: false,
+		idField: 'id',
+		sortName: 'id',
+		pageNumber: 1,
+		pageSize: 10,
+		sortOrder: 'desc',
+		escape: true,
+		searchOnEnterKey: true,
+		idField: 'systemId',
+		maintainSelected: true,
+		toolbar: '#toolbar',
+		queryParamsType:' ',	// 坑：放弃默认传参
+		queryParams: function queryParams(params) {   //设置查询参数
+			var param;
+		    var goodsNameSearch = $(".form-control").val();
+		    if (goodsNameSearch != '') {
+              param = {  
+              	  userId: userId,
+              	  goodsName:goodsNameSearch,
+              }; 
+		    }else{
+              param = {  
+              	  userId: userId,
+              }; 
+		    }
+ 
+              return param;                 
+        },
+		columns: [
+			{field: 'state', checkbox: true},
+			{field: 'goodsId', title: '商品编号', sortable: true, halign: 'center'},
+			{field: 'goodsName', title: '商品名称', sortable: true, halign: 'center'},
+			{field: 'goodsDesc', title: '商品描述', sortable: true, halign: 'center'},
+			{field: 'goodsPrice', title: '价格', sortable: true, halign: 'center'},
+			{field: 'goodsSale', title: '售卖状态', sortable: true, halign: 'center'},
+			{field: 'goodsQuality', title: '商品质量', sortable: true, halign: 'center'},
+			{field: 'goodsArea', title: '发货地址', sortable: true, halign: 'center'},
+			{field: 'goodsImage', title: '商品图片', sortable: true, halign: 'center'},
+			{field: 'goodsOwns', title: '商家', sortable: true, halign: 'center'},
+			{field: 'insertTime', title: '上架时间', sortable: true, halign: 'center'},
+			{field: 'action', title: '操作', halign: 'center', align: 'center', formatter: 'actionFormatter', events: 'actionEvents', clickToSelect: false}
+		]
+	}).on('all.bs.table', function (e, name, args) {
+		$('[data-toggle="tooltip"]').tooltip();
+		$('[data-toggle="popover"]').popover();  
+	});
+});
+
+
+
+function actionFormatter(value, row, index) {
+    return [
+        '<a class="like" href="javascript:void(0)" data-toggle="tooltip" title="Like"><i class="glyphicon glyphicon-heart"></i></a>　',
+        '<a class="edit ml10" href="javascript:void(0)" data-toggle="tooltip" title="Edit"><i class="glyphicon glyphicon-edit"></i></a>　',
+        '<a class="remove ml10" href="javascript:void(0)" data-toggle="tooltip" title="Remove"><i class="glyphicon glyphicon-remove"></i></a>'
+    ].join('');
+}
+
+window.actionEvents = {
+    'click .like': function (e, value, row, index) {
+        alert('You click like icon, row: ' + JSON.stringify(row));
+        console.log(value, row, index);
+    },
+    'click .edit': function (e, value, row, index) {
+        alert('You click edit icon, row: ' + JSON.stringify(row));
+        console.log(value, row, index);
+    },
+    'click .remove': function (e, value, row, index) {
+        alert('You click remove icon, row: ' + JSON.stringify(row));
+        console.log(value, row, index);
+    }
+};
+function detailFormatter(index, row) {
+	var html = [];
+	$.each(row, function (key, value) {
+		html.push('<p><b>' + key + ':</b> ' + value + '</p>');
+	});
+	return html.join('');
+}
+
+</script>
+</body>
+</html>

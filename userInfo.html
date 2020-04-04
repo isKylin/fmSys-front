@@ -24,25 +24,41 @@
 </div>
 <!-- 新增 -->
 <div id="createDialog" class="crudDialog" hidden>
-	<form>
+<!-- 	<form>
 		<div class="form-group">
-			<label for="input1">标题</label>
-			<input id="input1" type="text" class="form-control">
+			<label for="userName1">用户名</label>
+			<input id="userName" type="text" class="form-control" value="">
 		</div>
 		<div class="form-group">
-			<label for="input2">名称</label>
-			<input id="input2" type="text" class="form-control">
+			<label for="userPass1">密码</label>
+			<input id="userPass" type="text" class="form-control" value="">
 		</div>
 		<div class="form-group">
-			<label for="input3">根目录</label>
-			<input id="input3" type="text" class="form-control">
+			<label for="userAge1">年龄</label>
+			<input id="userAge" type="text" class="form-control" value="">
 		</div>
 		<div class="form-group">
-			<label for="input4">图标</label>
-			<input id="input4" type="text" class="form-control">
+			<label for="userSex1">性别</label>
+			<input id="userSex" type="text" class="form-control" value="">
+		</div>
+		<div class="form-group">
+			<label for="userPhone1">电话</label>
+			<input id="userPhone" type="text" class="form-control" value="">
+		</div>
+		<div class="form-group">
+			<label for="userAddress1">住址</label>
+			<input id="userAddress" type="text" class="form-control" value="">
+		</div>
+		<div class="form-group">
+			<label for="userRole1">角色</label>
+			<input id="userRole" type="text" class="form-control" value="">
+		</div>
+		<div class="form-group">
+			<label for="userBusLicense1">营业许可证</label>
+			<input id="userBusLicense" type="text" class="form-control" value="">
 		</div>
 	</form>
-</div>
+ --></div>
 <script src="plugins/jquery.1.12.4.min.js"></script>
 <script src="plugins/bootstrap-3.3.0/js/bootstrap.min.js"></script>
 <script src="plugins/bootstrap-table-1.11.0/bootstrap-table.min.js"></script>
@@ -52,6 +68,9 @@
 <script src="plugins/select2/js/select2.min.js"></script>
 <script src="js/common.js"></script>
 <script>
+	var content = '<form><div class="form-group"><label for="userName1">用户名</label><input id="userName" type="text" class="form-control" value=""></div><div class="form-group"><label for="userPass1">密码</label><input id="userPass" type="text" class="form-control" value=""></div><div class="form-group"><label for="userAge1">年龄</label><input id="userAge" type="text" class="form-control" value=""></div><div class="form-group"><label for="userSex1">性别</label><input id="userSex" type="text" class="form-control" value=""></div><div class="form-group"><label for="userPhone1">电话</label><input id="userPhone" type="text" class="form-control" value=""></div><div class="form-group"><label for="userAddress1">住址</label><input id="userAddress" type="text" class="form-control" value=""></div><div class="form-group"><label for="userRole1">角色</label><input id="userRole" type="text" class="form-control" value=""></div><div class="form-group"><label for="userBusLicense1">营业许可证</label><input id="userBusLicense" type="text" class="form-control" value=""></div></form>';
+	var urlBase = sessionStorage.getItem('urlBase');
+	var userIdSession = sessionStorage.getItem('userId');
 var $table = $('#table');
 $(function() {
 	$(document).on('focus', 'input[type="text"]', function() {
@@ -61,8 +80,33 @@ $(function() {
 			$(this).parent().find('label').removeClass('active');
 		}
 	});
+
+
+
+
 	$table.bootstrapTable({
-		url: '',
+		// method: "post",
+		// url: "http://192.168.43.12:8089/admin/getList",
+		ajax:function(request){                    //使用ajax请求
+			console.log(request.data)
+            $.ajax({
+                type:"post",
+                url:urlBase+'/admin/getUserList',
+                contentType:'application/json;charset=utf-8',
+                dataType:'json',
+                data:JSON.stringify(request.data),
+                success:function (res) {
+                    request.success({
+                        row:res.data,
+                    });
+                    console.log(res)
+                    $('#table').bootstrapTable('load', res.data);
+                },
+                    error:function(error){
+                        console.log(error);
+                    }
+            })
+        },
 		height: getHeight(),
 		striped: true,
 		search: true,
@@ -81,25 +125,49 @@ $(function() {
 		smartDisplay: false,
 		idField: 'id',
 		sortName: 'id',
+		pageNumber: 1,
+		pageSize: 10,
 		sortOrder: 'desc',
 		escape: true,
 		searchOnEnterKey: true,
 		idField: 'systemId',
 		maintainSelected: true,
 		toolbar: '#toolbar',
+		queryParamsType:' ',	// 坑：放弃默认传参
+		queryParams: function queryParams(params) {   //设置查询参数
+			var searchName = $('.form-control').val();
+			var param;
+			if(searchName != ''){
+				param = {  
+                  pageNumber: params.pageNumber,  
+                  pageSize: params.pageSize,
+                  roleType: 2,
+                  userName: searchName,
+                  userId:userIdSession,
+              };  
+			}else{
+              param = {  
+                  pageNumber: params.pageNumber,  
+                  pageSize: params.pageSize,
+                  roleType: 2,
+                  userId:userIdSession,
+              };  
+			}
+              return param;                 
+            },
 		columns: [
 			{field: 'state', checkbox: true},
-			{field: 'user_id', title: '编号', sortable: true, halign: 'center'},
-			{field: 'user_name', title: '用户名', sortable: true, halign: 'center'},
-			{field: 'user_age', title: '年龄', sortable: true, halign: 'center'},
-			{field: 'user_sex', title: '性别', sortable: true, halign: 'center'},
-			{field: 'user_phone', title: '联系方式', sortable: true, halign: 'center'},
-			{field: 'user_address', title: '住址', sortable: true, halign: 'center'},
-			{field: 'user_other', title: '其他', sortable: true, halign: 'center'},
-			{field: 'user_pass', title: '密码', sortable: true, halign: 'center'},
-			{field: 'user_role', title: '用户角色', sortable: true, halign: 'center'},
-			{field: 'insert_time', title: '注册时间', sortable: true, halign: 'center'},
-			{field: 'user_bus_license', title: '经营许可证', sortable: true, halign: 'center'},
+			{field: 'userId', title: '编号', sortable: true, halign: 'center'},
+			{field: 'userName', title: '用户名', sortable: true, halign: 'center'},
+			{field: 'userAge', title: '年龄', sortable: true, halign: 'center'},
+			{field: 'userSex', title: '性别', sortable: true, halign: 'center'},
+			{field: 'userPhone', title: '联系方式', sortable: true, halign: 'center'},
+			{field: 'userAddress', title: '住址', sortable: true, halign: 'center'},
+			{field: 'userOther', title: '其他', sortable: true, halign: 'center'},
+			{field: 'userPass', title: '密码', sortable: true, halign: 'center'},
+			{field: 'userRole', title: '用户角色', sortable: true, halign: 'center'},
+			{field: 'insertTime', title: '注册时间', sortable: true, halign: 'center'},
+			{field: 'userBusLicense', title: '经营许可证', sortable: true, halign: 'center'},
 			{field: 'action', title: '操作', halign: 'center', align: 'center', formatter: 'actionFormatter', events: 'actionEvents', clickToSelect: false}
 		]
 	}).on('all.bs.table', function (e, name, args) {
@@ -107,6 +175,9 @@ $(function() {
 		$('[data-toggle="popover"]').popover();  
 	});
 });
+
+
+
 function actionFormatter(value, row, index) {
     return [
         '<a class="like" href="javascript:void(0)" data-toggle="tooltip" title="Like"><i class="glyphicon glyphicon-heart"></i></a>　',
@@ -141,14 +212,41 @@ function createAction() {
 	$.confirm({
 		type: 'dark',
 		animationSpeed: 300,
-		title: '新增系统',
-		content: $('#createDialog').html(),
+		title: '新增用户',
+		content: content,
 		buttons: {
 			confirm: {
 				text: '确认',
 				btnClass: 'waves-effect waves-button',
 				action: function () {
-					$.alert('确认');
+						$.ajax({
+							url: urlBase + "/common/userAdd",
+							type: 'post',
+							contentType:'application/json;charset=utf-8',
+					        dataType:'json',
+							data: JSON.stringify({
+								userName: $('#userName').val(),
+								userPass: $('#userPass').val(),
+								userAge: $('#userAge').val(),
+								userSex: $('#userSex').val(),
+								userPhone: $('#userPhone').val(),
+								userAddress: $('#userAddress').val(),
+								userRole: $('#userRole').val(),
+								userBusLicense: $('#userBusLicense').val(),
+								userId:userIdSession,
+							}),
+							beforeSend: function() {
+
+							},
+							success: function(json){
+								location.replace(location.href);
+							},
+							error: function(error){
+								// var data = sessionStorage.getItem('userId');
+								alert("添加用户失败")
+								console.log(error);
+							}
+					});
 				}
 			},
 			cancel: {
@@ -178,14 +276,41 @@ function updateAction() {
 		$.confirm({
 			type: 'blue',
 			animationSpeed: 300,
-			title: '编辑系统',
-			content: $('#createDialog').html(),
+			title: '编辑用户',
+			content: content,
 			buttons: {
 				confirm: {
 					text: '确认',
 					btnClass: 'waves-effect waves-button',
 					action: function () {
-						$.alert('确认');
+						$.ajax({
+							url: urlBase + "/common/userUpdate",
+							type: 'post',
+							contentType:'application/json;charset=utf-8',
+					        dataType:'json',
+							data: JSON.stringify({
+								userId: rows[0].userId,
+								userName: $('#userName').val(),
+								userPass: $('#userPass').val(),
+								userAge: $('#userAge').val(),
+								userSex: $('#userSex').val(),
+								userPhone: $('#userPhone').val(),
+								userAddress: $('#userAddress').val(),
+								userRole: $('#userRole').val(),
+								userBusLicense: $('#userBusLicense').val(),
+								userId:userIdSession,
+							}),
+							beforeSend: function() {
+
+							},
+							success: function(json){
+								location.replace(location.href);
+							},
+							error: function(error){
+								alert("修改用户信息失败")
+								console.log(error);
+							}
+					});
 					}
 				},
 				cancel: {
@@ -223,11 +348,25 @@ function deleteAction() {
 					text: '确认',
 					btnClass: 'waves-effect waves-button',
 					action: function () {
-						var ids = new Array();
-						for (var i in rows) {
-							ids.push(rows[i].systemId);
-						}
-						$.alert('删除：id=' + ids.join("-"));
+						$.ajax({
+							url: urlBase + "/common/userDel",
+							type: 'post',
+							contentType:'application/json;charset=utf-8',
+					        dataType:'json',
+							data: JSON.stringify({
+								userId: rows[0].userId,
+							}),
+							beforeSend: function() {
+
+							},
+							success: function(json){
+								location.replace(location.href);
+							},
+							error: function(error){
+								alert("删除用户失败")
+								console.log(error);
+							}
+					});
 					}
 				},
 				cancel: {

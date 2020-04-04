@@ -16,9 +16,9 @@
 <body>
 <div id="main">
 	<div id="toolbar">
-		<a class="waves-effect waves-button" href="javascript:;" onclick="createAction()"><i class="zmdi zmdi-plus"></i> 新增商品</a>
-		<a class="waves-effect waves-button" href="javascript:;" onclick="updateAction()"><i class="zmdi zmdi-edit"></i> 编辑商品</a>
-		<a class="waves-effect waves-button" href="javascript:;" onclick="deleteAction()"><i class="zmdi zmdi-close"></i> 删除商品</a>
+		<a class="waves-effect waves-button" href="javascript:;" onclick="createAction()"><i class="zmdi zmdi-plus"></i> 新增用户</a>
+		<a class="waves-effect waves-button" href="javascript:;" onclick="updateAction()"><i class="zmdi zmdi-edit"></i> 编辑用户</a>
+		<a class="waves-effect waves-button" href="javascript:;" onclick="deleteAction()"><i class="zmdi zmdi-close"></i> 删除用户</a>
 	</div>
 	<table id="table"></table>
 </div>
@@ -68,7 +68,7 @@
 <script src="plugins/select2/js/select2.min.js"></script>
 <script src="js/common.js"></script>
 <script>
-	var content = '<form><div class="form-group"><label for="goodsName">商品名称</label><input id="goodsName" type="text" class="form-control" value=""></div><div class="form-group"><label for="goodsDesc">商品描述</label><input id="goodsDesc" type="text" class="form-control" value=""></div><div class="form-group"><label for="goodsPrice">商品价格</label><input id="goodsPrice" type="text" class="form-control" value=""></div><div class="form-group"><label for="goodsQuality">商品质量</label><input id="goodsQuality" type="text" class="form-control" value=""></div><div class="form-group"><label for="goodsArea">发货地址</label><input id="goodsArea" type="text" class="form-control" value=""></div><div class="form-group"><label for="goodsImage">商品图片</label><input id="goodsImage" type="text" class="form-control" value=""></div></form>';
+	var content = '<form><div class="form-group"><label for="userName1">用户名</label><input id="userName" type="text" class="form-control" value=""></div><div class="form-group"><label for="userPass1">密码</label><input id="userPass" type="text" class="form-control" value=""></div><div class="form-group"><label for="userAge1">年龄</label><input id="userAge" type="text" class="form-control" value=""></div><div class="form-group"><label for="userSex1">性别</label><input id="userSex" type="text" class="form-control" value=""></div><div class="form-group"><label for="userPhone1">电话</label><input id="userPhone" type="text" class="form-control" value=""></div><div class="form-group"><label for="userAddress1">住址</label><input id="userAddress" type="text" class="form-control" value=""></div><div class="form-group"><label for="userRole1">角色</label><input id="userRole" type="text" class="form-control" value=""></div><div class="form-group"><label for="userBusLicense1">营业许可证</label><input id="userBusLicense" type="text" class="form-control" value=""></div></form>';
 	var urlBase = sessionStorage.getItem('urlBase');
 	var userIdSession = sessionStorage.getItem('userId');
 var $table = $('#table');
@@ -84,12 +84,14 @@ $(function() {
 
 
 
-$table.bootstrapTable({
+	$table.bootstrapTable({
+		// method: "post",
+		// url: "http://192.168.43.12:8089/admin/getList",
 		ajax:function(request){                    //使用ajax请求
 			console.log(request.data)
             $.ajax({
                 type:"post",
-                url:urlBase+'/common/getGoodsList',
+                url:urlBase+'/admin/getUserList',
                 contentType:'application/json;charset=utf-8',
                 dataType:'json',
                 data:JSON.stringify(request.data),
@@ -133,33 +135,39 @@ $table.bootstrapTable({
 		toolbar: '#toolbar',
 		queryParamsType:' ',	// 坑：放弃默认传参
 		queryParams: function queryParams(params) {   //设置查询参数
+			var searchName = $('.form-control').val();
 			var param;
-		    var goodsNameSearch = $(".form-control").val();
-		    if (goodsNameSearch != '') {
+			if(searchName != ''){
+				param = {  
+                  pageNumber: params.pageNumber,  
+                  pageSize: params.pageSize,
+                  roleType: 3,
+                  userName: searchName,
+                  userId:userIdSession,
+              };  
+			}else{
               param = {  
-              	  userId: userId,
-              	  goodsName:goodsNameSearch,
-              }; 
-		    }else{
-              param = {  
-              	  userId: userId,
-              }; 
-		    }
- 
+                  pageNumber: params.pageNumber,  
+                  pageSize: params.pageSize,
+                  roleType: 3,
+                  userId:userIdSession,
+              };  
+			}
               return param;                 
-        },
+            },
 		columns: [
 			{field: 'state', checkbox: true},
-			{field: 'goodsId', title: '商品编号', sortable: true, halign: 'center'},
-			{field: 'goodsName', title: '商品名称', sortable: true, halign: 'center'},
-			{field: 'goodsDesc', title: '商品描述', sortable: true, halign: 'center'},
-			{field: 'goodsPrice', title: '价格', sortable: true, halign: 'center'},
-			{field: 'goodsSale', title: '售卖状态', sortable: true, halign: 'center'},
-			{field: 'goodsQuality', title: '商品质量', sortable: true, halign: 'center'},
-			{field: 'goodsArea', title: '发货地址', sortable: true, halign: 'center'},
-			{field: 'goodsImage', title: '商品图片', sortable: true, halign: 'center'},
-			{field: 'goodsOwns', title: '商家', sortable: true, halign: 'center'},
-			{field: 'insertTime', title: '上架时间', sortable: true, halign: 'center'},
+			{field: 'userId', title: '编号', sortable: true, halign: 'center'},
+			{field: 'userName', title: '用户名', sortable: true, halign: 'center'},
+			{field: 'userAge', title: '年龄', sortable: true, halign: 'center'},
+			{field: 'userSex', title: '性别', sortable: true, halign: 'center'},
+			{field: 'userPhone', title: '联系方式', sortable: true, halign: 'center'},
+			{field: 'userAddress', title: '住址', sortable: true, halign: 'center'},
+			{field: 'userOther', title: '其他', sortable: true, halign: 'center'},
+			{field: 'userPass', title: '密码', sortable: true, halign: 'center'},
+			{field: 'userRole', title: '用户角色', sortable: true, halign: 'center'},
+			{field: 'insertTime', title: '注册时间', sortable: true, halign: 'center'},
+			{field: 'userBusLicense', title: '经营许可证', sortable: true, halign: 'center'},
 			{field: 'action', title: '操作', halign: 'center', align: 'center', formatter: 'actionFormatter', events: 'actionEvents', clickToSelect: false}
 		]
 	}).on('all.bs.table', function (e, name, args) {
@@ -212,18 +220,19 @@ function createAction() {
 				btnClass: 'waves-effect waves-button',
 				action: function () {
 						$.ajax({
-							url: urlBase + "/farmer/goodsInsert",
+							url: urlBase + "/common/userAdd",
 							type: 'post',
 							contentType:'application/json;charset=utf-8',
 					        dataType:'json',
 							data: JSON.stringify({
-								goodsName: $('#goodsName').val(),
-								goodsDesc: $('#goodsDesc').val(),
-								goodsPrice: $('#goodsPrice').val(),
-								goodsQuality: $('#goodsQuality').val(),
-								goodsArea: $('#goodsArea').val(),
-								goodsImage: $('#goodsImage').val(),
-								goodsOwns: userIdSession,
+								userName: $('#userName').val(),
+								userPass: $('#userPass').val(),
+								userAge: $('#userAge').val(),
+								userSex: $('#userSex').val(),
+								userPhone: $('#userPhone').val(),
+								userAddress: $('#userAddress').val(),
+								userRole: $('#userRole').val(),
+								userBusLicense: $('#userBusLicense').val(),
 								userId:userIdSession,
 							}),
 							beforeSend: function() {
@@ -234,7 +243,7 @@ function createAction() {
 							},
 							error: function(error){
 								// var data = sessionStorage.getItem('userId');
-								alert("添加商品失败")
+								alert("添加用户失败")
 								console.log(error);
 							}
 					});
@@ -280,14 +289,15 @@ function updateAction() {
 							contentType:'application/json;charset=utf-8',
 					        dataType:'json',
 							data: JSON.stringify({
-								goodsId: rows[0].goodsId,
-								goodsName: $('#goodsName').val(),
-								goodsDesc: $('#goodsDesc').val(),
-								goodsPrice: $('#goodsPrice').val(),
-								goodsQuality: $('#goodsQuality').val(),
-								goodsArea: $('#goodsArea').val(),
-								goodsImage: $('#goodsImage').val(),
-								goodsOwns: userIdSession,
+								userId: rows[0].userId,
+								userName: $('#userName').val(),
+								userPass: $('#userPass').val(),
+								userAge: $('#userAge').val(),
+								userSex: $('#userSex').val(),
+								userPhone: $('#userPhone').val(),
+								userAddress: $('#userAddress').val(),
+								userRole: $('#userRole').val(),
+								userBusLicense: $('#userBusLicense').val(),
 								userId:userIdSession,
 							}),
 							beforeSend: function() {
@@ -344,9 +354,7 @@ function deleteAction() {
 							contentType:'application/json;charset=utf-8',
 					        dataType:'json',
 							data: JSON.stringify({
-								goodsId: rows[0].goodsId,
-								userId:userIdSession,
-								goodsSale:"下架",
+								userId: rows[0].userId,
 							}),
 							beforeSend: function() {
 
